@@ -7,7 +7,7 @@ function Landing() {
 
   useEffect(() => {
     setToken(localStorage.getItem('access_token'));
-  });
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-950 text-white">

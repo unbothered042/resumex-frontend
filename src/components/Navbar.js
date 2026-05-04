@@ -6,17 +6,8 @@ function Navbar() {
   const [token, setToken] = useState(localStorage.getItem('access_token'));
 
   useEffect(() => {
-    const handleStorageChange = () => {
-      setToken(localStorage.getItem('access_token'));
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    
-    // Also check on every render
     setToken(localStorage.getItem('access_token'));
-
-    return () => window.removeEventListener('storage', handleStorageChange);
-  });
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
