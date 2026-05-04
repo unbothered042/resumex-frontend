@@ -15,7 +15,7 @@ function Navbar() {
   return (
     <nav className="bg-gray-900 text-white px-6 py-4 flex justify-between items-center shadow-lg">
       <Link to="/" className="text-2xl font-bold text-blue-400">
-        Resume<span className="text-white">X</span>
+        CV<span className="text-white">X</span>
       </Link>
       <div className="flex gap-4 items-center">
         {token ? (
