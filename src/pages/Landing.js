@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
 function Landing() {
+  const [token, setToken] = useState(localStorage.getItem('access_token'));
+
+  useEffect(() => {
+    setToken(localStorage.getItem('access_token'));
+  });
+
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <Navbar />
@@ -17,18 +23,29 @@ function Landing() {
           with match score, skill gaps, improvement tips, and a rewritten CV — in seconds.
         </p>
         <div className="flex gap-4">
-          <Link
-            to="/register"
-            className="bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-lg text-lg font-semibold transition"
-          >
-            Get Started Free
-          </Link>
-          <Link
-            to="/login"
-            className="border border-gray-500 hover:border-blue-400 px-8 py-4 rounded-lg text-lg font-semibold transition"
-          >
-            Login
-          </Link>
+          {token ? (
+            <Link
+              to="/dashboard"
+              className="bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-lg text-lg font-semibold transition"
+            >
+              Go to Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/register"
+                className="bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-lg text-lg font-semibold transition"
+              >
+                Get Started Free
+              </Link>
+              <Link
+                to="/login"
+                className="border border-gray-500 hover:border-blue-400 px-8 py-4 rounded-lg text-lg font-semibold transition"
+              >
+                Login
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
@@ -59,17 +76,16 @@ function Landing() {
         <h2 className="text-3xl font-bold mb-4">Ready to get hired?</h2>
         <p className="text-gray-400 mb-8">Join thousands of job seekers using CVX to land interviews faster.</p>
         <Link
-          to="/register"
+          to={token ? "/dashboard" : "/register"}
           className="bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-lg text-lg font-semibold transition"
         >
-          Analyze My CV Now
+          {token ? "Go to Dashboard" : "Analyze My CV Now"}
         </Link>
       </div>
 
       {/* Footer */}
       <footer className="text-center text-gray-600 py-6 border-t border-gray-800">
-        © 2026 CVX.|Created by Paul Iheabunike| All rights reserved. | <a href="/privacy" className="hover:underline">Privacy Policy</a> | <a href="/terms" className="hover:underline">Terms of Service</a>
-         
+        © 2026 CVX. | Created by Paul Iheabunike | All rights reserved. | <a href="/privacy" className="hover:underline">Privacy Policy</a> | <a href="/terms" className="hover:underline">Terms of Service</a>
       </footer>
     </div>
   );

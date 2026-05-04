@@ -1,14 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function Navbar() {
   const navigate = useNavigate();
-  const token = localStorage.getItem('access_token');
+  const [token, setToken] = useState(localStorage.getItem('access_token'));
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setToken(localStorage.getItem('access_token'));
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also check on every render
+    setToken(localStorage.getItem('access_token'));
+
+    return () => window.removeEventListener('storage', handleStorageChange);
+  });
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
     localStorage.removeItem('user');
+    setToken(null);
     navigate('/login');
   };
 
