@@ -27,7 +27,7 @@ function Register() {
       await API.post('/accounts/register/', formData);
       navigate('/login');
     } catch (err) {
-      setError(err.response?.data?.email?.[0] || 'Registration failed. Please try again.');
+      setError(JSON.stringify(err.response?.data) || 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }
