@@ -31,7 +31,7 @@ function Landing() {
           ) : (
             <>
               <Link
-                to="/register"
+                to="/dashboard"
                 className="bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-lg text-lg font-semibold transition"
               >
                 Get Started Free
@@ -74,7 +74,7 @@ function Landing() {
         <h2 className="text-3xl font-bold mb-4">Ready to get hired?</h2>
         <p className="text-gray-400 mb-8">Join thousands of job seekers using CVX to land interviews faster.</p>
         <Link
-          to={token ? "/dashboard" : "/register"}
+          to={token ? "/dashboard" : "/dashboard"}
           className="bg-blue-500 hover:bg-blue-600 px-8 py-4 rounded-lg text-lg font-semibold transition"
         >
           {token ? "Go to Dashboard" : "Analyze My CV Now"}
