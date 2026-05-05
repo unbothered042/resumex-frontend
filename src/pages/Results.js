@@ -7,6 +7,7 @@ function Results() {
   const location = useLocation();
   const navigate = useNavigate();
   const analysis = location.state?.analysis;
+  const token = localStorage.getItem('access_token');
 
   if (!analysis) {
     navigate('/dashboard');
@@ -81,33 +82,47 @@ function Results() {
         </div>
 
         <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4 text-yellow-400">📋 Summary</h2>
+          <h2 className="text-xl font-semibold mb-4 text-yellow-400">Summary</h2>
           <p className="text-gray-300 leading-relaxed">{analysis.summary}</p>
         </div>
 
         {analysis.cv_rewrite_requested && analysis.rewritten_cv && (
           <div className="bg-gray-900 border border-blue-500 rounded-xl p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4 text-blue-400">New CV Ready</h2>
-            <p className="text-gray-400 mb-4">Your New CV tailored to this role is ready.</p>
-            <button onClick={() => handleDownload('cv')} className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-semibold transition">
-              Download New CV (PDF)
-            </button>
+            <p className="text-gray-400 mb-4">Your newly written CV tailored to this role is ready.</p>
+            <button onClick={() => handleDownload('cv')} className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-semibold transition">Download New CV (PDF)</button>
           </div>
         )}
 
         {analysis.cover_letter_requested && analysis.cover_letter && (
           <div className="bg-gray-900 border border-purple-500 rounded-xl p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4 text-purple-400">Cover Letter Ready</h2>
-            <p className="text-gray-400 mb-4">Your new cover letter for this role is ready.</p>
-            <button onClick={() => handleDownload('cover-letter')} className="bg-purple-500 hover:bg-purple-600 px-6 py-3 rounded-lg font-semibold transition">
-              Download Cover Letter (PDF)
-            </button>
+            <p className="text-gray-400 mb-4">Your newly generated cover letter for this role is ready.</p>
+            <button onClick={() => handleDownload('cover-letter')} className="bg-purple-500 hover:bg-purple-600 px-6 py-3 rounded-lg font-semibold transition">Download Cover Letter (PDF)</button>
+          </div>
+        )}
+
+        {analysis.guest && (
+          <div className="bg-gray-900 border border-blue-500 rounded-xl p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-3 text-blue-400">Want more from CVX?</h2>
+            <p className="text-gray-400 mb-4">Create a free account to unlock:</p>
+            <ul className="text-gray-300 text-sm mb-5 space-y-2">
+              <li>A new CV tailored to this job (PDF)</li>
+              <li>📝 A new cover letter for this role (PDF)</li>
+              <li>📋 Analysis history and access all past analyses</li>
+            </ul>
+            <div className="flex gap-3">
+              <Link to="/register" className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-semibold transition">Create Free Account</Link>
+              <Link to="/login" className="border border-gray-600 hover:border-blue-400 px-6 py-3 rounded-lg font-semibold transition">Login</Link>
+            </div>
           </div>
         )}
 
         <div className="flex gap-4 mt-4">
           <Link to="/dashboard" className="flex-1 text-center bg-gray-800 hover:bg-gray-700 py-3 rounded-xl font-semibold transition">Analyze Another CV</Link>
-          <Link to="/history" className="flex-1 text-center bg-gray-800 hover:bg-gray-700 py-3 rounded-xl font-semibold transition">View History</Link>
+          {token && (
+            <Link to="/history" className="flex-1 text-center bg-gray-800 hover:bg-gray-700 py-3 rounded-xl font-semibold transition">View History</Link>
+          )}
         </div>
       </div>
     </div>

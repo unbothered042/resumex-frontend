@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import API from '../api/axios';
 import Navbar from '../components/Navbar';
 
@@ -11,11 +11,15 @@ function Dashboard() {
   const [coverLetterRequested, setCoverLetterRequested] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [requiresAuth, setRequiresAuth] = useState(false);
+
+  const token = localStorage.getItem('access_token');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
+    setRequiresAuth(false);
 
     try {
       const formData = new FormData();
@@ -30,7 +34,12 @@ function Dashboard() {
 
       navigate('/results', { state: { analysis: res.data } });
     } catch (err) {
-      setError('Analysis failed. Please check your CV and try again.');
+      if (err.response?.data?.requires_auth) {
+        setRequiresAuth(true);
+        setError('');
+      } else {
+        setError('Analysis failed. Please check your CV and try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -41,11 +50,22 @@ function Dashboard() {
       <Navbar />
       <div className="max-w-3xl mx-auto px-6 py-12">
         <h1 className="text-4xl font-bold mb-2">Analyze Your CV</h1>
-        <p className="text-gray-400 mb-10">Upload your CV and paste the job description to get started.</p>
+        <p className="text-gray-400 mb-10">Start with a free CV analysis, no account required. Sign up to unlock tailored rewrites and cover letters</p>
 
         {error && (
           <div className="bg-red-500 bg-opacity-20 border border-red-500 text-red-400 px-4 py-3 rounded-lg mb-6">
             {error}
+          </div>
+        )}
+
+        {requiresAuth && (
+          <div className="bg-blue-500 bg-opacity-20 border border-blue-500 text-blue-300 px-4 py-4 rounded-lg mb-6">
+            <p className="font-semibold mb-2">Create a free account to unlock this feature.</p>
+            <p className="text-sm mb-4">Create a free CVX account to unlock tailored CV rewrites, cover letters and saved results.</p>
+            <div className="flex gap-3">
+              <Link to="/register" className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg text-sm font-semibold transition">Create Free Account</Link>
+              <Link to="/login" className="border border-blue-500 hover:bg-blue-500 hover:bg-opacity-20 px-4 py-2 rounded-lg text-sm font-semibold transition">Login</Link>
+            </div>
           </div>
         )}
 
@@ -76,18 +96,18 @@ function Dashboard() {
             <textarea value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} required rows={8} placeholder="Paste the full job description here..." className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 resize-none" />
           </div>
 
-          <div className="flex items-center gap-3 bg-gray-900 border border-gray-700 rounded-xl px-4 py-4">
+          <div className={`flex items-center gap-3 rounded-xl px-4 py-4 border ${token ? 'bg-gray-900 border-gray-700' : 'bg-gray-900 border-gray-800 opacity-60'}`}>
             <input type="checkbox" id="rewrite" checked={cvRewriteRequested} onChange={(e) => setCvRewriteRequested(e.target.checked)} className="w-5 h-5 accent-blue-500" />
-            <label htmlFor="rewrite" className="cursor-pointer">
-              <p className="font-semibold">Generate New CV</p>
+            <label htmlFor="rewrite" className="cursor-pointer flex-1">
+              <p className="font-semibold">Generate Rewritten CV {!token && <span className="text-blue-400 text-xs ml-2">Requires account</span>}</p>
               <p className="text-gray-400 text-sm">Get a new CV to better match this job, downloadable as PDF</p>
             </label>
           </div>
 
-          <div className="flex items-center gap-3 bg-gray-900 border border-gray-700 rounded-xl px-4 py-4">
+          <div className={`flex items-center gap-3 rounded-xl px-4 py-4 border ${token ? 'bg-gray-900 border-gray-700' : 'bg-gray-900 border-gray-800 opacity-60'}`}>
             <input type="checkbox" id="cover-letter" checked={coverLetterRequested} onChange={(e) => setCoverLetterRequested(e.target.checked)} className="w-5 h-5 accent-blue-500" />
-            <label htmlFor="cover-letter" className="cursor-pointer">
-              <p className="font-semibold">Generate Cover Letter</p>
+            <label htmlFor="cover-letter" className="cursor-pointer flex-1">
+              <p className="font-semibold">Generate Cover Letter {!token && <span className="text-blue-400 text-xs ml-2">Requires account</span>}</p>
               <p className="text-gray-400 text-sm">Get a new tailored cover letter for this role, downloadable as PDF</p>
             </label>
           </div>
@@ -95,6 +115,12 @@ function Dashboard() {
           <button type="submit" disabled={loading} className="bg-blue-500 hover:bg-blue-600 py-4 rounded-xl font-semibold text-lg transition disabled:opacity-50">
             {loading ? 'Analyzing your CV... This may take a moment ⏳' : 'Analyze My CV →'}
           </button>
+
+          {!token && (
+            <p className="text-center text-gray-500 text-sm">
+              <Link to="/register" className="text-blue-400 hover:underline">Create a free account</Link> to unlock CV rewrite, cover letter, and analysis history.
+            </p>
+          )}
         </form>
       </div>
     </div>

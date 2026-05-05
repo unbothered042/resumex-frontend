@@ -19,9 +19,7 @@ function Landing() {
           Land Your Dream Job with <span className="text-blue-400">CVX</span>
         </h1>
         <p className="text-xl text-gray-400 max-w-2xl mb-10">
-          Upload your CV, paste the job description, and get an AI-powered analysis
-          with match score, skill gaps, improvement tips, and a rewritten CV — in seconds.
-        </p>
+          Get a Recruiter-Level CV Analysis in Seconds. Upload your CV and paste a job description to get instant AI-powered analysis. No account required to start. Sign up free to unlock CV rewrites and cover letters.</p>
         <div className="flex gap-4">
           {token ? (
             <Link
