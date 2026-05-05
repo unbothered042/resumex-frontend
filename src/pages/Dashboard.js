@@ -8,6 +8,7 @@ function Dashboard() {
   const [cvFile, setCvFile] = useState(null);
   const [jobDescription, setJobDescription] = useState('');
   const [cvRewriteRequested, setCvRewriteRequested] = useState(false);
+  const [coverLetterRequested, setCoverLetterRequested] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -21,6 +22,7 @@ function Dashboard() {
       formData.append('cv_file', cvFile);
       formData.append('job_description', jobDescription);
       formData.append('cv_rewrite_requested', cvRewriteRequested.toString());
+      formData.append('cover_letter_requested', coverLetterRequested.toString());
 
       const res = await API.post('/analyze/', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -48,18 +50,10 @@ function Dashboard() {
         )}
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-          {/* CV Upload */}
           <div>
             <label className="block text-gray-300 font-semibold mb-2">Upload CV (PDF)</label>
             <div className="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center hover:border-blue-500 transition">
-              <input
-                type="file"
-                accept=".pdf"
-                onChange={(e) => setCvFile(e.target.files[0])}
-                required
-                className="hidden"
-                id="cv-upload"
-              />
+              <input type="file" accept=".pdf" onChange={(e) => setCvFile(e.target.files[0])} required className="hidden" id="cv-upload" />
               <label htmlFor="cv-upload" className="cursor-pointer">
                 {cvFile ? (
                   <div>
@@ -77,39 +71,28 @@ function Dashboard() {
             </div>
           </div>
 
-          {/* Job Description */}
           <div>
             <label className="block text-gray-300 font-semibold mb-2">Job Description</label>
-            <textarea
-              value={jobDescription}
-              onChange={(e) => setJobDescription(e.target.value)}
-              required
-              rows={8}
-              placeholder="Paste the full job description here..."
-              className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 resize-none"
-            />
+            <textarea value={jobDescription} onChange={(e) => setJobDescription(e.target.value)} required rows={8} placeholder="Paste the full job description here..." className="w-full bg-gray-900 border border-gray-700 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 resize-none" />
           </div>
 
-          {/* CV Rewrite Option */}
           <div className="flex items-center gap-3 bg-gray-900 border border-gray-700 rounded-xl px-4 py-4">
-            <input
-              type="checkbox"
-              id="rewrite"
-              checked={cvRewriteRequested}
-              onChange={(e) => setCvRewriteRequested(e.target.checked)}
-              className="w-5 h-5 accent-blue-500"
-            />
+            <input type="checkbox" id="rewrite" checked={cvRewriteRequested} onChange={(e) => setCvRewriteRequested(e.target.checked)} className="w-5 h-5 accent-blue-500" />
             <label htmlFor="rewrite" className="cursor-pointer">
-              <p className="font-semibold">Generate Rewritten CV</p>
-              <p className="text-gray-400 text-sm">AI will rewrite your CV to better match this job — downloadable as PDF</p>
+              <p className="font-semibold">Generate New CV</p>
+              <p className="text-gray-400 text-sm">Get a new CV to better match this job, downloadable as PDF</p>
             </label>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-blue-500 hover:bg-blue-600 py-4 rounded-xl font-semibold text-lg transition disabled:opacity-50"
-          >
+          <div className="flex items-center gap-3 bg-gray-900 border border-gray-700 rounded-xl px-4 py-4">
+            <input type="checkbox" id="cover-letter" checked={coverLetterRequested} onChange={(e) => setCoverLetterRequested(e.target.checked)} className="w-5 h-5 accent-blue-500" />
+            <label htmlFor="cover-letter" className="cursor-pointer">
+              <p className="font-semibold">Generate Cover Letter</p>
+              <p className="text-gray-400 text-sm">Get a new tailored cover letter for this role, downloadable as PDF</p>
+            </label>
+          </div>
+
+          <button type="submit" disabled={loading} className="bg-blue-500 hover:bg-blue-600 py-4 rounded-xl font-semibold text-lg transition disabled:opacity-50">
             {loading ? 'Analyzing your CV... This may take a moment ⏳' : 'Analyze My CV →'}
           </button>
         </form>
