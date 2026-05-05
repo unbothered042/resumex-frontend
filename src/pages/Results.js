@@ -88,7 +88,7 @@ function Results() {
         {analysis.cv_rewrite_requested && analysis.rewritten_cv && (
           <div className="bg-gray-900 border border-blue-500 rounded-xl p-6 mb-6">
             <h2 className="text-xl font-semibold mb-4 text-blue-400">New CV Ready</h2>
-            <p className="text-gray-400 mb-4">Your AI-rewritten CV tailored to this role is ready.</p>
+            <p className="text-gray-400 mb-4">Your New CV tailored to this role is ready.</p>
             <button onClick={() => handleDownload('cv')} className="bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-lg font-semibold transition">
               Download New CV (PDF)
             </button>
@@ -97,7 +97,7 @@ function Results() {
 
         {analysis.cover_letter_requested && analysis.cover_letter && (
           <div className="bg-gray-900 border border-purple-500 rounded-xl p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4 text-purple-400">📝 Cover Letter Ready</h2>
+            <h2 className="text-xl font-semibold mb-4 text-purple-400">Cover Letter Ready</h2>
             <p className="text-gray-400 mb-4">Your new cover letter for this role is ready.</p>
             <button onClick={() => handleDownload('cover-letter')} className="bg-purple-500 hover:bg-purple-600 px-6 py-3 rounded-lg font-semibold transition">
               Download Cover Letter (PDF)
