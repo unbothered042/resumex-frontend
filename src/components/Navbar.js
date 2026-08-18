@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import cvxMark from '../assets/cvx-mark.png';
 
 function Navbar() {
   const navigate = useNavigate();
@@ -19,12 +20,8 @@ function Navbar() {
 
   return (
     <nav className="bg-[#0A0E14] text-[#E7E5DF] px-6 py-4 flex justify-between items-center border-b border-[#161B24]">
-      <Link
-        to="/"
-        className="text-2xl font-semibold tracking-tight"
-        style={{ fontFamily: "'Fraunces', ui-serif, Georgia, serif" }}
-      >
-        CV<span className="text-[#D4A657]">X</span>
+      <Link to="/">
+        <img src={cvxMark} alt="CVX" className="h-8 w-auto" />
       </Link>
       <div className="flex gap-6 items-center">
         {token ? (
