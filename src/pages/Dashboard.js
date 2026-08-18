@@ -112,11 +112,11 @@ function Dashboard() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           <div>
-            <label className="block text-[#E7E5DF] font-semibold mb-2">Upload CV (PDF)</label>
+            <label className="block text-[#E7E5DF] font-semibold mb-2">Upload CV (PDF or Word)</label>
             <div className="border-2 border-dashed border-[#2A303C] rounded-xl p-8 text-center hover:border-[#D4A657] transition">
               <input
                 type="file"
-                accept=".pdf"
+                accept=".pdf,.doc,.docx"
                 onChange={(e) => setCvFile(e.target.files[0])}
                 required
                 className="hidden"
@@ -133,7 +133,7 @@ function Dashboard() {
                   <div className="flex flex-col items-center gap-3 text-[#6C7386]">
                     <UploadIcon />
                     <p className="text-[#E7E5DF] font-semibold">Click to upload your CV</p>
-                    <p className="text-sm">PDF files only</p>
+                    <p className="text-sm">PDF or Word documents</p>
                   </div>
                 )}
               </label>
