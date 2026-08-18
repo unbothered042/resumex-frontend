@@ -18,28 +18,38 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-gray-900 text-white px-6 py-4 flex justify-between items-center shadow-lg">
-      <Link to="/" className="text-2xl font-bold text-blue-400">
-        CV<span className="text-white">X</span>
+    <nav className="bg-[#0A0E14] text-[#E7E5DF] px-6 py-4 flex justify-between items-center border-b border-[#161B24]">
+      <Link
+        to="/"
+        className="text-2xl font-semibold tracking-tight"
+        style={{ fontFamily: "'Fraunces', ui-serif, Georgia, serif" }}
+      >
+        CV<span className="text-[#D4A657]">X</span>
       </Link>
-      <div className="flex gap-4 items-center">
+      <div className="flex gap-6 items-center">
         {token ? (
           <>
-            <Link to="/dashboard" className="hover:text-blue-400 transition">Dashboard</Link>
-            <Link to="/history" className="hover:text-blue-400 transition">History</Link>
+            <Link to="/dashboard" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
+              Dashboard
+            </Link>
+            <Link to="/history" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
+              History
+            </Link>
             <button
               onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg transition"
+              className="text-sm border border-[#2A303C] hover:border-[#D4A657] hover:text-[#D4A657] px-4 py-2 rounded transition"
             >
               Logout
             </button>
           </>
         ) : (
           <>
-            <Link to="/login" className="hover:text-blue-400 transition">Login</Link>
+            <Link to="/login" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
+              Login
+            </Link>
             <Link
               to="/register"
-              className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg transition"
+              className="text-sm bg-[#D4A657] text-[#0A0E14] hover:bg-[#e0b86e] px-4 py-2 rounded font-semibold transition"
             >
               Get Started
             </Link>
