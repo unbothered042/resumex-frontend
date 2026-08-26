@@ -11,7 +11,6 @@ function Register() {
     first_name: '',
     last_name: '',
     email: '',
-    phone: '',
     password: '',
   });
   const [error, setError] = useState('');
@@ -75,15 +74,6 @@ function Register() {
               name="email"
               placeholder="Email Address"
               value={formData.email}
-              onChange={handleChange}
-              required
-              className="w-full bg-[#0A0E14] border border-[#2A303C] rounded-lg px-4 py-3 text-[#E7E5DF] placeholder-[#5C6272] focus:outline-none focus:border-[#D4A657]"
-            />
-            <input
-              type="text"
-              name="phone"
-              placeholder="Phone Number"
-              value={formData.phone}
               onChange={handleChange}
               required
               className="w-full bg-[#0A0E14] border border-[#2A303C] rounded-lg px-4 py-3 text-[#E7E5DF] placeholder-[#5C6272] focus:outline-none focus:border-[#D4A657]"
