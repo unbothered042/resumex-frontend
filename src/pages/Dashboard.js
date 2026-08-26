@@ -1,9 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import API from '../api/axios';
 import Navbar from '../components/Navbar';
 
 const displayFont = { fontFamily: "'Fraunces', ui-serif, Georgia, serif" };
+
+const LEVELS = [
+  { key: 'entry', label: 'Entry Level' },
+  { key: 'mid', label: 'Mid Level' },
+  { key: 'senior', label: 'Senior Level' },
+  { key: 'executive', label: 'Executive' },
+];
 
 function CheckIcon() {
   return (
@@ -32,21 +39,71 @@ function ArrowIcon() {
 
 function Dashboard() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [cvFile, setCvFile] = useState(null);
   const [jobDescription, setJobDescription] = useState('');
   const [cvRewriteRequested, setCvRewriteRequested] = useState(false);
   const [coverLetterRequested, setCoverLetterRequested] = useState(false);
+  const [level, setLevel] = useState('entry');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [requiresAuth, setRequiresAuth] = useState(false);
+  const [requiresPurchase, setRequiresPurchase] = useState(false);
+  const [verifyingPayment, setVerifyingPayment] = useState(false);
+  const [paymentMessage, setPaymentMessage] = useState('');
+  const [profile, setProfile] = useState(null);
 
   const token = localStorage.getItem('access_token');
+  const needsLevel = cvRewriteRequested || coverLetterRequested;
+  const unlockedLevels = profile?.unlocked_levels || [];
+
+  useEffect(() => {
+    if (token) fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Paystack redirects back with ?reference=... — verify it once, then
+  // strip the param so a page refresh doesn't try to re-verify.
+  useEffect(() => {
+    const reference = searchParams.get('reference') || searchParams.get('trxref');
+    if (reference && token) {
+      verifyPayment(reference);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const res = await API.get('/accounts/me/');
+      setProfile(res.data);
+    } catch (err) {
+      // Non-fatal — form still works, just without the live credit display.
+    }
+  };
+
+  const verifyPayment = async (reference) => {
+    setVerifyingPayment(true);
+    try {
+      const res = await API.post('/payments/verify/', { reference });
+      setPaymentMessage(res.data.message);
+      await fetchProfile();
+    } catch (err) {
+      setPaymentMessage('Could not confirm your payment. If you were charged, contact support.');
+    } finally {
+      setVerifyingPayment(false);
+      searchParams.delete('reference');
+      searchParams.delete('trxref');
+      searchParams.delete('payment');
+      setSearchParams(searchParams, { replace: true });
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
     setRequiresAuth(false);
+    setRequiresPurchase(false);
 
     try {
       const formData = new FormData();
@@ -54,6 +111,7 @@ function Dashboard() {
       formData.append('job_description', jobDescription);
       formData.append('cv_rewrite_requested', cvRewriteRequested.toString());
       formData.append('cover_letter_requested', coverLetterRequested.toString());
+      if (needsLevel) formData.append('level', level);
 
       const res = await API.post('/analyze/', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -63,7 +121,9 @@ function Dashboard() {
     } catch (err) {
       if (err.response?.data?.requires_auth) {
         setRequiresAuth(true);
-        setError('');
+      } else if (err.response?.data?.requires_purchase || err.response?.data?.requires_upgrade) {
+        setRequiresPurchase(true);
+        setError(err.response.data.error);
       } else {
         setError('Analysis failed. Please check your CV and try again.');
       }
@@ -76,14 +136,55 @@ function Dashboard() {
     <div className="min-h-screen bg-[#0A0E14] text-[#E7E5DF]">
       <Navbar />
       <div className="max-w-3xl mx-auto px-6 py-14">
-        <h1 className="text-4xl mb-2" style={displayFont}>Analyze Your CV</h1>
+        <div className="flex items-start justify-between mb-2 gap-4">
+          <h1 className="text-4xl" style={displayFont}>Analyze Your CV</h1>
+          {token && profile && (
+            <div className="text-right shrink-0">
+              <p className="text-sm text-[#9AA1B2]">
+                {profile.free_analyses_remaining > 0
+                  ? `${profile.free_analyses_remaining} free analyses left`
+                  : `${profile.analysis_credits} credits`}
+              </p>
+              <Link to="/plans" className="text-xs text-[#D4A657] hover:underline">
+                Buy more credits
+              </Link>
+            </div>
+          )}
+        </div>
         <p className="text-[#9AA1B2] mb-10">
           Start with a free CV analysis, no account required. Sign up to unlock tailored rewrites and cover letters.
         </p>
 
+        {verifyingPayment && (
+          <div className="bg-[#0D121B] border border-[#2A303C] text-[#9AA1B2] px-4 py-3 rounded mb-6 text-sm">
+            Confirming your payment...
+          </div>
+        )}
+
+        {paymentMessage && !verifyingPayment && (
+          <div className="bg-[#0F1A12] border border-[#8FAE7D]/40 text-[#8FAE7D] px-4 py-3 rounded mb-6 text-sm">
+            {paymentMessage}
+          </div>
+        )}
+
         {error && (
           <div className="bg-[#3A1418] border border-[#7A2C33] text-[#E88A93] px-4 py-3 rounded mb-6 text-sm">
             {error}
+          </div>
+        )}
+
+        {requiresPurchase && (
+          <div className="bg-[#1A1710] border border-[#D4A657]/40 text-[#E7E5DF] px-4 py-4 rounded mb-6">
+            <p className="font-semibold mb-2">You're out of credits.</p>
+            <p className="text-sm text-[#9AA1B2] mb-4">
+              Top up a plan to keep analyzing, rewriting, and generating cover letters.
+            </p>
+            <Link
+              to="/plans"
+              className="inline-block bg-[#D4A657] text-[#0A0E14] hover:bg-[#e0b86e] px-4 py-2 rounded text-sm font-semibold transition"
+            >
+              View Plans
+            </Link>
           </div>
         )}
 
@@ -158,6 +259,7 @@ function Dashboard() {
               id="rewrite"
               checked={cvRewriteRequested}
               onChange={(e) => setCvRewriteRequested(e.target.checked)}
+              disabled={!token}
               className="w-5 h-5 accent-[#D4A657]"
             />
             <label htmlFor="rewrite" className="cursor-pointer flex-1">
@@ -165,7 +267,7 @@ function Dashboard() {
                 Generate Rewritten CV
                 {!token && <span className="text-[#D4A657] text-xs ml-2">Requires account</span>}
               </p>
-              <p className="text-[#9AA1B2] text-sm">Get a new CV to better match this job, downloadable as PDF</p>
+              <p className="text-[#9AA1B2] text-sm">Get a new CV to better match this job, downloadable as PDF (uses 1 credit)</p>
             </label>
           </div>
 
@@ -175,6 +277,7 @@ function Dashboard() {
               id="cover-letter"
               checked={coverLetterRequested}
               onChange={(e) => setCoverLetterRequested(e.target.checked)}
+              disabled={!token}
               className="w-5 h-5 accent-[#D4A657]"
             />
             <label htmlFor="cover-letter" className="cursor-pointer flex-1">
@@ -182,9 +285,31 @@ function Dashboard() {
                 Generate Cover Letter
                 {!token && <span className="text-[#D4A657] text-xs ml-2">Requires account</span>}
               </p>
-              <p className="text-[#9AA1B2] text-sm">Get a new tailored cover letter for this role, downloadable as PDF</p>
+              <p className="text-[#9AA1B2] text-sm">Get a new tailored cover letter for this role, downloadable as PDF (uses 1 credit)</p>
             </label>
           </div>
+
+          {needsLevel && token && (
+            <div className="bg-[#0D121B] border border-[#2A303C] rounded-xl px-4 py-4">
+              <label className="block text-[#E7E5DF] font-semibold mb-2">Seniority Level</label>
+              <select
+                value={level}
+                onChange={(e) => setLevel(e.target.value)}
+                className="w-full bg-[#0A0E14] border border-[#2A303C] rounded-lg px-4 py-2.5 text-[#E7E5DF] focus:outline-none focus:border-[#D4A657]"
+              >
+                {LEVELS.map((l) => (
+                  <option key={l.key} value={l.key} disabled={profile && !unlockedLevels.includes(l.key)}>
+                    {l.label}{profile && !unlockedLevels.includes(l.key) ? ' (upgrade to unlock)' : ''}
+                  </option>
+                ))}
+              </select>
+              {profile && !unlockedLevels.includes(level) && (
+                <p className="text-xs text-[#D4A657] mt-2">
+                  Your current plan doesn't include this level. <Link to="/plans" className="underline">Upgrade here</Link>.
+                </p>
+              )}
+            </div>
+          )}
 
           <button
             type="submit"

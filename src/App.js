@@ -6,6 +6,8 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Results from './pages/Results';
 import History from './pages/History';
+import AdminUsers from './pages/AdminUsers';
+import Plans from './pages/Plans';
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/results" element={<Results />} />
         <Route path="/history" element={<History />} />
+        <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/plans" element={<Plans />} />
       </Routes>
     </Router>
   );

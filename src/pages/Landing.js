@@ -148,7 +148,9 @@ function Landing() {
         © 2026 CVX, Built by Paul Iheabunike ·{' '}
         <a href="/privacy" className="hover:text-[#D4A657] transition">Privacy Policy</a>{' '}
         ·{' '}
-        <a href="/terms" className="hover:text-[#D4A657] transition">Terms of Service</a>
+        <a href="/terms" className="hover:text-[#D4A657] transition">Terms of Service</a>{' '}
+        ·{' '}
+        <a href="mailto:cvxsupport@gmail.com" className="hover:text-[#D4A657] transition">Contact Support</a>
       </footer>
     </div>
   );

@@ -5,6 +5,8 @@ import cvxMark from '../assets/cvx-mark.png';
 function Navbar() {
   const navigate = useNavigate();
   const [token, setToken] = useState(localStorage.getItem('access_token'));
+  const storedUser = JSON.parse(localStorage.getItem('user') || 'null');
+  const isStaff = storedUser?.is_staff;
 
   useEffect(() => {
     setToken(localStorage.getItem('access_token'));
@@ -24,6 +26,12 @@ function Navbar() {
         <img src={cvxMark} alt="CVX" className="h-8 w-auto" />
       </Link>
       <div className="flex gap-6 items-center">
+        <a
+          href="mailto:cvxsupport@gmail.com"
+          className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition"
+        >
+          Support
+        </a>
         {token ? (
           <>
             <Link to="/dashboard" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
@@ -32,6 +40,14 @@ function Navbar() {
             <Link to="/history" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
               History
             </Link>
+            <Link to="/plans" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
+              Plans
+            </Link>
+            {isStaff && (
+              <Link to="/admin/users" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
+                Admin
+              </Link>
+            )}
             <button
               onClick={handleLogout}
               className="text-sm border border-[#2A303C] hover:border-[#D4A657] hover:text-[#D4A657] px-4 py-2 rounded transition"
