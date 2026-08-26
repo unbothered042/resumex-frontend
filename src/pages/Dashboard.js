@@ -152,7 +152,9 @@ function Dashboard() {
           )}
         </div>
         <p className="text-[#9AA1B2] mb-10">
-          Start with a free CV analysis, no account required. Sign up to unlock tailored rewrites and cover letters.
+          {token
+            ? 'Upload a CV and job description to get your match score, skill gaps, and improvement tips.'
+            : 'Start with a free CV analysis, no account required. Sign up to unlock tailored rewrites and cover letters.'}
         </p>
 
         {verifyingPayment && (
