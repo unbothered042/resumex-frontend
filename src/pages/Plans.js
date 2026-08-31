@@ -70,7 +70,7 @@ function Plans() {
 
                 <ul className="text-[#C7CAD4] text-sm space-y-2 mb-8 flex-1">
                   <li>{plan.credits} full analyses (CV rewrite + cover letter included)</li>
-                  <li>Unlocks {plan.key === 'starter' ? 'Entry' : plan.key === 'plus' ? 'Entry & Mid' : 'all seniority'} level rewrites</li>
+                  <li>Unlocks {plan.key === 'starter' ? 'Entry & Mid' : 'all seniority'} level rewrites</li>
                   <li>Credits never expire</li>
                 </ul>
 
