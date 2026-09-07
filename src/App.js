@@ -10,6 +10,8 @@ import AdminUsers from './pages/AdminUsers';
 import Plans from './pages/Plans';
 import Rebuild from './pages/Rebuild';
 import CreateCV from './pages/CreateCV';
+import Privacy from './pages/Privacy';
+import Terms from './pages/Terms';
 
 function App() {
   return (
@@ -25,6 +27,8 @@ function App() {
         <Route path="/plans" element={<Plans />} />
         <Route path="/rebuild" element={<Rebuild />} />
         <Route path="/create" element={<CreateCV />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
       </Routes>
     </Router>
   );
