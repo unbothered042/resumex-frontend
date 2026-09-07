@@ -41,10 +41,11 @@ function RevenueSummary() {
   }
 
   const cards = [
-    { label: 'Today', value: revenue.daily },
-    { label: 'This Week', value: revenue.weekly },
-    { label: 'This Month', value: revenue.monthly },
-    { label: 'This Year', value: revenue.yearly },
+    { label: 'Today', value: formatNGN(revenue.daily) },
+    { label: 'This Week', value: formatNGN(revenue.weekly) },
+    { label: 'This Month', value: formatNGN(revenue.monthly) },
+    { label: 'This Year', value: formatNGN(revenue.yearly) },
+    { label: 'Total CVs Analyzed', value: revenue.total_cvs_analyzed.toLocaleString() },
   ];
 
   const chartData = revenue.trend.map((point) => ({
@@ -55,11 +56,11 @@ function RevenueSummary() {
   return (
     <div className="mb-12">
       <h2 className="text-2xl mb-4" style={displayFont}>Revenue</h2>
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
         {cards.map((card) => (
           <div key={card.label} className="bg-[#0D121B] border border-[#2A303C] rounded-xl p-5">
             <p className="text-[#6C7386] text-xs uppercase tracking-wide mb-2">{card.label}</p>
-            <p className="text-2xl font-semibold text-[#D4A657]">{formatNGN(card.value)}</p>
+            <p className="text-2xl font-semibold text-[#D4A657]">{card.value}</p>
           </div>
         ))}
       </div>
