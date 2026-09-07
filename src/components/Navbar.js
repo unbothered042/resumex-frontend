@@ -2,11 +2,38 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import cvxMark from '../assets/cvx-mark.png';
 
-function SupportIcon() {
+function DashboardIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M4 6h16v12H4z" strokeLinejoin="round" />
-      <path d="m4 7 8 6 8-6" strokeLinecap="round" strokeLinejoin="round" />
+      <rect x="3" y="3" width="7" height="9" rx="1" />
+      <rect x="14" y="3" width="7" height="5" rx="1" />
+      <rect x="14" y="12" width="7" height="9" rx="1" />
+      <rect x="3" y="16" width="7" height="5" rx="1" />
+    </svg>
+  );
+}
+
+function RebuildIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M21 12a9 9 0 1 1-2.64-6.36" strokeLinecap="round" />
+      <path d="M21 3v6h-6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function CreateIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M12 5v14M5 12h14" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function PlansIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M3 7h18M3 12h18M3 17h10" strokeLinecap="round" />
     </svg>
   );
 }
@@ -56,28 +83,36 @@ function Navbar() {
   };
 
   return (
-    <nav className="bg-[#0A0E14] text-[#E7E5DF] px-6 py-4 flex justify-between items-center border-b border-[#161B24]">
+    <nav className="bg-[#0A0E14] text-[#E7E5DF] px-4 sm:px-6 py-4 flex justify-between items-center border-b border-[#161B24]">
       <Link to="/">
         <img src={cvxMark} alt="CVX" className="h-8 w-auto" />
       </Link>
-      <div className="flex gap-4 items-center">
-        <a
-          href="mailto:cvxsupport@gmail.com"
-          title="Contact Support"
-          className="text-[#9AA1B2] hover:text-[#D4A657] transition"
-        >
-          <SupportIcon />
-        </a>
+      <div className="flex gap-3 sm:gap-4 items-center">
         {token ? (
           <>
-            <Link to="/dashboard" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
-              Dashboard
+            <Link
+              to="/dashboard"
+              title="Dashboard"
+              className="flex items-center gap-1.5 text-sm text-[#9AA1B2] hover:text-[#D4A657] transition"
+            >
+              <DashboardIcon />
+              <span className="hidden sm:inline">Dashboard</span>
             </Link>
-            <Link to="/rebuild" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
-              Rebuild
+            <Link
+              to="/rebuild"
+              title="Rebuild"
+              className="flex items-center gap-1.5 text-sm text-[#9AA1B2] hover:text-[#D4A657] transition"
+            >
+              <RebuildIcon />
+              <span className="hidden sm:inline">Rebuild</span>
             </Link>
-            <Link to="/create" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
-              Create
+            <Link
+              to="/create"
+              title="Create"
+              className="flex items-center gap-1.5 text-sm text-[#9AA1B2] hover:text-[#D4A657] transition"
+            >
+              <CreateIcon />
+              <span className="hidden sm:inline">Create</span>
             </Link>
             <Link
               to="/history"
@@ -86,8 +121,13 @@ function Navbar() {
             >
               <HistoryIcon />
             </Link>
-            <Link to="/plans" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
-              Plans
+            <Link
+              to="/plans"
+              title="Plans"
+              className="flex items-center gap-1.5 text-sm text-[#9AA1B2] hover:text-[#D4A657] transition"
+            >
+              <PlansIcon />
+              <span className="hidden sm:inline">Plans</span>
             </Link>
             {isStaff && (
               <Link
