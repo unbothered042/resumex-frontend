@@ -73,6 +73,12 @@ function Navbar() {
             <Link to="/dashboard" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
               Dashboard
             </Link>
+            <Link to="/rebuild" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
+              Rebuild
+            </Link>
+            <Link to="/create" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] transition">
+              Create
+            </Link>
             <Link
               to="/history"
               title="History"

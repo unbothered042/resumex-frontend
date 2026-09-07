@@ -145,7 +145,7 @@ function Landing() {
 
       {/* Footer */}
       <footer className="text-center text-[#5C6272] text-sm py-8 border-t border-[#161B24]">
-        © 2026 CVX, Built by Paul Iheabunike ·{' '}
+        © 2026 CVX, Built by Sylva Groups·{' '}
         <a href="/privacy" className="hover:text-[#D4A657] transition">Privacy Policy</a>{' '}
         ·{' '}
         <a href="/terms" className="hover:text-[#D4A657] transition">Terms of Service</a>{' '}

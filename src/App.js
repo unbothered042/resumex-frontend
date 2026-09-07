@@ -8,6 +8,8 @@ import Results from './pages/Results';
 import History from './pages/History';
 import AdminUsers from './pages/AdminUsers';
 import Plans from './pages/Plans';
+import Rebuild from './pages/Rebuild';
+import CreateCV from './pages/CreateCV';
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
         <Route path="/history" element={<History />} />
         <Route path="/admin/users" element={<AdminUsers />} />
         <Route path="/plans" element={<Plans />} />
+        <Route path="/rebuild" element={<Rebuild />} />
+        <Route path="/create" element={<CreateCV />} />
       </Routes>
     </Router>
   );
