@@ -5,24 +5,20 @@ import Navbar from '../components/Navbar';
 
 const displayFont = { fontFamily: "'Fraunces', ui-serif, Georgia, serif" };
 
-function Login() {
+function ResetPassword() {
   const navigate = useNavigate();
   const location = useLocation();
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
+    email: location.state?.email || '',
+    code: '',
+    new_password: '',
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  const successMessage = location.state?.verified
-    ? 'Email verified! You can now log in.'
-    : location.state?.resetSuccess
-    ? 'Password reset successful. You can now log in.'
-    : '';
-
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: name === 'code' ? value.replace(/\D/g, '').slice(0, 6) : value });
   };
 
   const handleSubmit = async (e) => {
@@ -30,18 +26,10 @@ function Login() {
     setLoading(true);
     setError('');
     try {
-      const res = await API.post('/accounts/login/', formData);
-      localStorage.setItem('access_token', res.data.access);
-      localStorage.setItem('refresh_token', res.data.refresh);
-      localStorage.setItem('user', JSON.stringify(res.data.user_id));
-      navigate('/dashboard');
+      await API.post('/accounts/reset-password/', formData);
+      navigate('/login', { state: { resetSuccess: true } });
     } catch (err) {
-      const data = err.response?.data;
-      if (data?.code === 'EMAIL_NOT_VERIFIED') {
-        navigate('/verify-otp', { state: { email: data.email } });
-        return;
-      }
-      setError(data?.error || 'Login failed. Please try again.');
+      setError(err.response?.data?.error || 'Reset failed. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -52,14 +40,11 @@ function Login() {
       <Navbar />
       <div className="flex items-center justify-center px-6 py-16">
         <div className="bg-[#0D121B] border border-[#2A303C] p-8 rounded-xl w-full max-w-md">
-          <h2 className="text-3xl mb-2 text-center" style={displayFont}>Welcome Back</h2>
-          <p className="text-[#9AA1B2] text-center mb-8">Login to your CVX account</p>
+          <h2 className="text-3xl mb-2 text-center" style={displayFont}>Reset Password</h2>
+          <p className="text-[#9AA1B2] text-center mb-8">
+            Enter the code sent to your email and choose a new password
+          </p>
 
-          {successMessage && (
-            <div className="bg-[#132A1E] border border-[#2C7A4B] text-[#8AE8A0] px-4 py-3 rounded-lg mb-6 text-sm">
-              {successMessage}
-            </div>
-          )}
           {error && (
             <div className="bg-[#3A1418] border border-[#7A2C33] text-[#E88A93] px-4 py-3 rounded-lg mb-6 text-sm">
               {error}
@@ -77,31 +62,37 @@ function Login() {
               className="w-full bg-[#0A0E14] border border-[#2A303C] rounded-lg px-4 py-3 text-[#E7E5DF] placeholder-[#5C6272] focus:outline-none focus:border-[#D4A657]"
             />
             <input
-              type="password"
-              name="password"
-              placeholder="Password"
-              value={formData.password}
+              type="text"
+              name="code"
+              placeholder="6-digit code"
+              value={formData.code}
               onChange={handleChange}
               required
+              maxLength={6}
+              inputMode="numeric"
+              className="w-full bg-[#0A0E14] border border-[#2A303C] rounded-lg px-4 py-3 text-center tracking-[0.4em] text-[#E7E5DF] placeholder-[#5C6272] focus:outline-none focus:border-[#D4A657]"
+            />
+            <input
+              type="password"
+              name="new_password"
+              placeholder="New Password"
+              value={formData.new_password}
+              onChange={handleChange}
+              required
+              minLength={6}
               className="w-full bg-[#0A0E14] border border-[#2A303C] rounded-lg px-4 py-3 text-[#E7E5DF] placeholder-[#5C6272] focus:outline-none focus:border-[#D4A657]"
             />
-            <div className="text-right -mt-2">
-              <Link to="/forgot-password" className="text-sm text-[#9AA1B2] hover:text-[#D4A657] hover:underline">
-                Forgot password?
-              </Link>
-            </div>
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || formData.code.length !== 6}
               className="bg-[#D4A657] text-[#0A0E14] hover:bg-[#e0b86e] py-3 rounded-lg font-semibold transition disabled:opacity-50"
             >
-              {loading ? 'Logging in...' : 'Login'}
+              {loading ? 'Resetting...' : 'Reset Password'}
             </button>
           </form>
 
           <p className="text-center text-[#9AA1B2] mt-6">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-[#D4A657] hover:underline">Register</Link>
+            <Link to="/forgot-password" className="text-[#D4A657] hover:underline">Didn't get a code? Request again</Link>
           </p>
         </div>
       </div>
@@ -109,4 +100,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default ResetPassword;

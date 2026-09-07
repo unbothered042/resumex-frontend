@@ -126,7 +126,7 @@ function Landing() {
             to="/dashboard"
             className="bg-[#D4A657] text-[#0A0E14] hover:bg-[#e0b86e] px-7 py-3.5 rounded font-semibold transition"
           >
-            {token ? 'Go to Dashboard' : 'Analyze My CV, Free'}
+            {token ? 'Go to Dashboard' : 'Analyze My CV'}
           </Link>
           {!token && (
             <Link
@@ -179,7 +179,7 @@ function Landing() {
           Stop guessing why you're not hearing back.
         </h2>
         <p className="text-[#9AA1B2] mb-9 max-w-md mx-auto">
-          Run your first analysis in under a minute, free.
+          Run your first analysis in under a minute.
         </p>
         <Link
           to="/dashboard"

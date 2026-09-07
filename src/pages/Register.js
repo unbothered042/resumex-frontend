@@ -26,7 +26,7 @@ function Register() {
     setError('');
     try {
       await API.post('/accounts/register/', formData);
-      navigate('/login');
+      navigate('/verify-otp', { state: { email: formData.email } });
     } catch (err) {
       setError(JSON.stringify(err.response?.data) || 'Registration failed. Please try again.');
     } finally {
