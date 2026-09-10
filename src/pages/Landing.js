@@ -62,38 +62,33 @@ function ApplyIcon() {
 
 const WORKFLOW = [
   {
-    n: '01',
     Icon: ScoreIcon,
     title: 'Analyze',
     copy: 'Upload your CV and a job description. Get a precise match score and a full breakdown of which required skills are present, and which are missing.',
   },
   {
-    n: '02',
     Icon: ImproveIcon,
     title: 'Improve',
     copy: 'Get specific, actionable recommendations pulled from the actual job description, not generic CV advice.',
   },
   {
-    n: '03',
     Icon: RewriteIcon,
     title: 'Rewrite',
     copy: 'Generate a role-tailored version of your CV that keeps your real experience but aligns it to what the job is asking for.',
   },
   {
-    n: '04',
     Icon: CreateIcon,
     title: 'Create',
     copy: "No CV yet? Answer a few guided questions and CVX builds a professional one for you from scratch.",
+    to: '/create',
   },
   {
-    n: '05',
     Icon: RebuildIcon,
     title: 'Rebuild',
     copy: 'Upload an old or messy CV and get back a polished, professional version, no job description needed.',
     to: '/rebuild',
   },
   {
-    n: '06',
     Icon: ApplyIcon,
     title: 'Apply',
     copy: 'Generate a tailored cover letter and keep every application you send organized in one place.',
@@ -173,15 +168,9 @@ function Landing() {
           </div>
 
           <div className="divide-y divide-[#161B24]">
-            {WORKFLOW.map(({ n, Icon, title, copy, to }) => {
+            {WORKFLOW.map(({ Icon, title, copy, to }) => {
               const row = (
-                <div className="flex items-start gap-6 py-8">
-                  <span
-                    className="text-[#3A4150] text-2xl tabular-nums shrink-0 w-10"
-                    style={displayFont}
-                  >
-                    {n}
-                  </span>
+                <div className="flex items-start gap-4 py-8">
                   <div className="text-[#D4A657] mt-1.5 shrink-0">
                     <Icon />
                   </div>
