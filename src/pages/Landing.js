@@ -12,15 +12,6 @@ function ScoreIcon() {
   );
 }
 
-function GapIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <circle cx="12" cy="12" r="8" />
-      <circle cx="12" cy="12" r="3.2" />
-    </svg>
-  );
-}
-
 function ImproveIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
