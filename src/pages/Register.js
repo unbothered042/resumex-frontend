@@ -40,7 +40,7 @@ function Register() {
       <div className="flex items-center justify-center px-6 py-16">
         <div className="bg-[#0D121B] border border-[#2A303C] p-8 rounded-xl w-full max-w-md">
           <h2 className="text-3xl mb-2 text-center" style={displayFont}>Create Account</h2>
-          <p className="text-[#9AA1B2] text-center mb-8">Start analyzing your CV for free</p>
+          <p className="text-[#9AA1B2] text-center mb-8">Start analyzing your CV</p>
 
           {error && (
             <div className="bg-[#3A1418] border border-[#7A2C33] text-[#E88A93] px-4 py-3 rounded-lg mb-6 text-sm break-words">

@@ -6,7 +6,7 @@ const displayFont = { fontFamily: "'Fraunces', ui-serif, Georgia, serif" };
 
 function ScoreIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
       <path d="M4 19V13M11 19V7M18 19V10" strokeLinecap="round" />
     </svg>
   );
@@ -14,25 +14,43 @@ function ScoreIcon() {
 
 function GapIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
       <circle cx="12" cy="12" r="8" />
       <circle cx="12" cy="12" r="3.2" />
     </svg>
   );
 }
 
+function ImproveIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M4 8h16M4 12.5h9M4 17h13" strokeLinecap="round" />
+      <path d="M15.5 10.8 17.7 8l2.2 2.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function RewriteIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
       <path d="M4 20h4.2L18.8 9.4a1.5 1.5 0 0 0 0-2.1l-2.1-2.1a1.5 1.5 0 0 0-2.1 0L4 15.8V20Z" strokeLinejoin="round" />
       <path d="M13.5 6.2 17.8 10.5" />
     </svg>
   );
 }
 
+function CreateIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M14 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function RebuildIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
       <path d="M3 12a9 9 0 0 1 15-6.7L21 8" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M21 3v5h-5" strokeLinecap="round" strokeLinejoin="round" />
       <path d="M21 12a9 9 0 0 1-15 6.7L3 16" strokeLinecap="round" strokeLinejoin="round" />
@@ -41,42 +59,53 @@ function RebuildIcon() {
   );
 }
 
-function CreateIcon() {
+function ApplyIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
-      <path d="M14 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" strokeLinecap="round" strokeLinejoin="round" />
-      <path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4Z" strokeLinejoin="round" />
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+      <path d="M4 13.5v5a1.6 1.6 0 0 0 1.6 1.6h12.8A1.6 1.6 0 0 0 20 18.5v-5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 13.5h4.3l1.3 1.8h4.8l1.3-1.8H20" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M12 3v8M9 8.2 12 11l3-2.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
 
-const FEATURES = [
+const WORKFLOW = [
   {
+    n: '01',
     Icon: ScoreIcon,
-    title: 'Match Score',
-    copy: "A precise percentage showing how well your CV fits the role, not a guess, a measurement.",
+    title: 'Analyze',
+    copy: 'Upload your CV and a job description. Get a precise match score and a full breakdown of which required skills are present, and which are missing.',
   },
   {
-    Icon: GapIcon,
-    title: 'Skill Gap Analysis',
-    copy: 'See exactly which required skills are present, and which ones are missing before a recruiter ever notices.',
+    n: '02',
+    Icon: ImproveIcon,
+    title: 'Improve',
+    copy: 'Get specific, actionable recommendations pulled from the actual job description, not generic CV advice.',
   },
   {
+    n: '03',
     Icon: RewriteIcon,
-    title: 'CV Rewrite',
-    copy: 'A rewritten, role-tailored CV that keeps your real experience, ready to download as a polished PDF.',
+    title: 'Rewrite',
+    copy: 'Generate a role-tailored version of your CV that keeps your real experience but aligns it to what the job is asking for.',
   },
   {
+    n: '04',
+    Icon: CreateIcon,
+    title: 'Create',
+    copy: "No CV yet? Answer a few guided questions and CVX builds a professional one for you from scratch.",
+  },
+  {
+    n: '05',
     Icon: RebuildIcon,
-    title: 'Rebuild My CV',
+    title: 'Rebuild',
     copy: 'Upload an old or messy CV and get back a polished, professional version, no job description needed.',
     to: '/rebuild',
   },
   {
-    Icon: CreateIcon,
-    title: 'Create From Scratch',
-    copy: "No CV yet? Answer a few guided questions and CVX builds a professional one for you, step by step.",
-    to: '/create',
+    n: '06',
+    Icon: ApplyIcon,
+    title: 'Apply',
+    copy: 'Generate a tailored cover letter and keep every application you send organized in one place.',
   },
 ];
 
@@ -139,34 +168,47 @@ function Landing() {
         </div>
       </div>
 
-      {/* Features */}
-      <div className="border-t border-[#161B24] bg-[#0D121B] px-6 py-20">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-sm tracking-[0.25em] uppercase text-[#6C7386] mb-12 text-center">
-            What CVX Does
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-[#161B24]">
-            {FEATURES.map(({ Icon, title, copy, to }) => {
-              const cardBody = (
-                <>
-                  <div className="text-[#D4A657] mb-5">
+      {/* Workflow */}
+      <div className="border-t border-[#161B24] bg-[#0D121B] px-6 py-24">
+        <div className="max-w-3xl mx-auto">
+          <div className="mb-16 text-center">
+            <h2 className="text-3xl md:text-4xl mb-4" style={displayFont}>
+              Everything you need to apply smarter.
+            </h2>
+            <p className="text-[#9AA1B2] max-w-md mx-auto">
+              CVX isn't a CV checker. It's the whole workflow, from a first
+              upload to a finished application.
+            </p>
+          </div>
+
+          <div className="divide-y divide-[#161B24]">
+            {WORKFLOW.map(({ n, Icon, title, copy, to }) => {
+              const row = (
+                <div className="flex items-start gap-6 py-8">
+                  <span
+                    className="text-[#3A4150] text-2xl tabular-nums shrink-0 w-10"
+                    style={displayFont}
+                  >
+                    {n}
+                  </span>
+                  <div className="text-[#D4A657] mt-1.5 shrink-0">
                     <Icon />
                   </div>
-                  <h3 className="text-lg font-semibold mb-2" style={{ fontFamily: "'Fraunces', serif" }}>
-                    {title}
-                  </h3>
-                  <p className="text-[#9AA1B2] text-sm leading-relaxed">{copy}</p>
-                </>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-1.5" style={{ fontFamily: "'Fraunces', serif" }}>
+                      {title}
+                    </h3>
+                    <p className="text-[#9AA1B2] text-sm leading-relaxed max-w-md">{copy}</p>
+                  </div>
+                </div>
               );
 
               return to ? (
-                <Link key={title} to={to} className="bg-[#0D121B] hover:bg-[#11161f] p-8 transition block">
-                  {cardBody}
+                <Link key={title} to={to} className="block hover:bg-[#11161f] transition -mx-6 px-6">
+                  {row}
                 </Link>
               ) : (
-                <div key={title} className="bg-[#0D121B] p-8">
-                  {cardBody}
-                </div>
+                <div key={title}>{row}</div>
               );
             })}
           </div>

@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">CVX</string>
+    <string name="title_activity_main">CVX</string>
+    <string name="package_name">com.unbothered.cvx</string>
+    <string name="custom_url_scheme">com.unbothered.cvx</string>
+</resources>
