@@ -21,9 +21,31 @@ function XIcon() {
   );
 }
 
+function ArrowIcon() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M4 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 const SCORE_GOOD = '#8FAE7D';
 const SCORE_MID = '#D4A657';
 const SCORE_LOW = '#B0524B';
+
+const BREAKDOWN_LABELS = {
+  required_skills: 'Required Skills',
+  experience_depth: 'Experience Depth',
+  domain_overlap: 'Domain Overlap',
+  evidence_quality: 'Evidence Quality',
+};
+
+const BREAKDOWN_MAX = {
+  required_skills: 40,
+  experience_depth: 25,
+  domain_overlap: 20,
+  evidence_quality: 15,
+};
 
 function Results() {
   const location = useLocation();
@@ -59,6 +81,13 @@ function Results() {
     return SCORE_LOW;
   };
 
+  const hasRewriteScore =
+    analysis.cv_rewrite_requested &&
+    analysis.rewritten_cv &&
+    typeof analysis.rewritten_match_score === 'number';
+
+  const scoreDelta = hasRewriteScore ? analysis.rewritten_match_score - analysis.match_score : null;
+
   return (
     <div className="min-h-screen bg-[#0A0E14] text-[#E7E5DF]">
       <Navbar />
@@ -66,18 +95,90 @@ function Results() {
         <h1 className="text-4xl mb-2" style={displayFont}>Analysis Results</h1>
         <p className="text-[#9AA1B2] mb-10">Here's how your CV matches the job description.</p>
 
-        <div className="bg-[#0D121B] border border-[#2A303C] rounded-xl p-8 mb-6 text-center">
-          <p className="text-[#9AA1B2] mb-2 text-sm tracking-[0.15em] uppercase">Match Score</p>
-          <p className="text-7xl font-semibold mb-4" style={{ color: getScoreColor(analysis.match_score), ...displayFont }}>
-            {analysis.match_score}%
-          </p>
-          <div className="w-full bg-[#161B24] rounded-full h-2">
-            <div
-              className="h-2 rounded-full transition-all"
-              style={{ width: `${analysis.match_score}%`, backgroundColor: getScoreColor(analysis.match_score) }}
-            />
+        {hasRewriteScore ? (
+          <div className="bg-[#0D121B] border border-[#2A303C] rounded-xl p-8 mb-6">
+            <p className="text-[#9AA1B2] mb-6 text-sm tracking-[0.15em] uppercase text-center">Match Score</p>
+            <div className="flex items-center justify-center gap-6 mb-6">
+              <div className="text-center">
+                <p className="text-xs text-[#6C7386] uppercase tracking-wide mb-1">Original</p>
+                <p className="text-5xl font-semibold" style={{ color: getScoreColor(analysis.match_score), ...displayFont }}>
+                  {analysis.match_score}%
+                </p>
+              </div>
+              <div className="text-[#3A4150] mt-4">
+                <ArrowIcon />
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-[#6C7386] uppercase tracking-wide mb-1">Rewritten</p>
+                <p className="text-5xl font-semibold" style={{ color: getScoreColor(analysis.rewritten_match_score), ...displayFont }}>
+                  {analysis.rewritten_match_score}%
+                </p>
+              </div>
+            </div>
+            {scoreDelta !== null && (
+              <p
+                className="text-center text-sm font-medium mb-2"
+                style={{ color: scoreDelta > 0 ? SCORE_GOOD : scoreDelta < 0 ? SCORE_LOW : '#9AA1B2' }}
+              >
+                {scoreDelta > 0 && `+${scoreDelta} points from the rewrite`}
+                {scoreDelta === 0 && 'No change — see breakdown below for why'}
+                {scoreDelta < 0 && `${scoreDelta} points — the rewrite changed the emphasis, not for the better here`}
+              </p>
+            )}
+            {scoreDelta !== null && scoreDelta < 15 && (
+              <p className="text-center text-xs text-[#6C7386] max-w-md mx-auto">
+                A rewrite can sharpen how your real experience is presented, but it can't invent skills
+                or years of experience the job requires and your CV doesn't have. Check "Missing Skills"
+                below — a large gap there caps how much any rewrite can move this number.
+              </p>
+            )}
           </div>
-        </div>
+        ) : (
+          <div className="bg-[#0D121B] border border-[#2A303C] rounded-xl p-8 mb-6 text-center">
+            <p className="text-[#9AA1B2] mb-2 text-sm tracking-[0.15em] uppercase">Match Score</p>
+            <p className="text-7xl font-semibold mb-4" style={{ color: getScoreColor(analysis.match_score), ...displayFont }}>
+              {analysis.match_score}%
+            </p>
+            <div className="w-full bg-[#161B24] rounded-full h-2">
+              <div
+                className="h-2 rounded-full transition-all"
+                style={{ width: `${analysis.match_score}%`, backgroundColor: getScoreColor(analysis.match_score) }}
+              />
+            </div>
+          </div>
+        )}
+
+        {analysis.score_breakdown && (
+          <div className="bg-[#0D121B] border border-[#2A303C] rounded-xl p-6 mb-6">
+            <h2 className="text-lg font-semibold mb-4 text-[#D4A657]">Score Breakdown</h2>
+            <div className="space-y-3">
+              {Object.entries(BREAKDOWN_LABELS).map(([key, label]) => {
+                const value = analysis.score_breakdown?.[key];
+                const rewrittenValue = analysis.rewritten_score_breakdown?.[key];
+                const max = BREAKDOWN_MAX[key];
+                if (value === undefined) return null;
+                return (
+                  <div key={key}>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-[#C7CAD4]">{label}</span>
+                      <span className="text-[#9AA1B2]">
+                        {hasRewriteScore && rewrittenValue !== undefined
+                          ? `${value} → ${rewrittenValue} / ${max}`
+                          : `${value} / ${max}`}
+                      </span>
+                    </div>
+                    <div className="w-full bg-[#161B24] rounded-full h-1.5">
+                      <div
+                        className="h-1.5 rounded-full"
+                        style={{ width: `${(value / max) * 100}%`, backgroundColor: SCORE_MID }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="bg-[#0D121B] border border-[#2A303C] rounded-xl p-6 mb-6">
           <h2 className="flex items-center gap-2 text-lg font-semibold mb-4" style={{ color: SCORE_GOOD }}>
