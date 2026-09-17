@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import API from '../api/axios';
 import Navbar from '../components/Navbar';
 
 const displayFont = { fontFamily: "'Fraunces', ui-serif, Georgia, serif" };
+
+const LEVELS = [
+  { key: 'entry', label: 'Entry Level' },
+  { key: 'mid', label: 'Mid Level' },
+  { key: 'senior', label: 'Senior Level' },
+  { key: 'executive', label: 'Executive' },
+];
 
 function CheckIcon() {
   return (
@@ -50,13 +57,28 @@ const BREAKDOWN_MAX = {
 function Results() {
   const location = useLocation();
   const navigate = useNavigate();
-  const analysis = location.state?.analysis;
+  const [analysis, setAnalysis] = useState(location.state?.analysis);
   const token = localStorage.getItem('access_token');
+
+  const [pendingExtra, setPendingExtra] = useState(null); // 'rewrite' | 'cover_letter' | null
+  const [extraLevel, setExtraLevel] = useState('mid');
+  const [extraLoading, setExtraLoading] = useState(false);
+  const [extraError, setExtraError] = useState('');
+  const [requiresPurchase, setRequiresPurchase] = useState(false);
+  const [profile, setProfile] = useState(null);
+
+  React.useEffect(() => {
+    if (token) {
+      API.get('/accounts/me/').then((res) => setProfile(res.data)).catch(() => {});
+    }
+  }, [token]);
 
   if (!analysis) {
     navigate('/dashboard');
     return null;
   }
+
+  const unlockedLevels = profile?.unlocked_levels || [];
 
   const handleDownload = async (type) => {
     try {
@@ -75,6 +97,30 @@ function Results() {
     }
   };
 
+  const requestExtra = async (type) => {
+    setExtraLoading(true);
+    setExtraError('');
+    setRequiresPurchase(false);
+    try {
+      const res = await API.post(`/history/${analysis.id}/extras/`, {
+        type,
+        level: extraLevel,
+      });
+      setAnalysis(res.data);
+      setPendingExtra(null);
+      if (token) {
+        API.get('/accounts/me/').then((r) => setProfile(r.data)).catch(() => {});
+      }
+    } catch (err) {
+      if (err.response?.data?.requires_purchase || err.response?.data?.requires_upgrade) {
+        setRequiresPurchase(true);
+      }
+      setExtraError(err.response?.data?.error || 'That request failed. Please try again — you have not been charged.');
+    } finally {
+      setExtraLoading(false);
+    }
+  };
+
   const getScoreColor = (score) => {
     if (score >= 75) return SCORE_GOOD;
     if (score >= 50) return SCORE_MID;
@@ -87,6 +133,8 @@ function Results() {
     typeof analysis.rewritten_match_score === 'number';
 
   const scoreDelta = hasRewriteScore ? analysis.rewritten_match_score - analysis.match_score : null;
+
+  const canRequestExtras = token && analysis.id;
 
   return (
     <div className="min-h-screen bg-[#0A0E14] text-[#E7E5DF]">
@@ -247,6 +295,90 @@ function Results() {
             >
               Download Cover Letter (PDF)
             </button>
+          </div>
+        )}
+
+        {/* Post-analysis choice: rewrite / cover letter / neither — only for
+            logged-in users with a saved analysis, and only for whichever of
+            the two hasn't already been generated. */}
+        {canRequestExtras && (!analysis.cv_rewrite_requested || !analysis.cover_letter_requested) && (
+          <div className="bg-[#0D121B] border border-[#2A303C] rounded-xl p-6 mb-6">
+            <h2 className="text-lg font-semibold mb-1 text-[#D4A657]">What would you like next?</h2>
+            <p className="text-[#9AA1B2] text-sm mb-5">Each of these uses 1 credit — only charged if generation succeeds.</p>
+
+            {extraError && (
+              <div className="bg-[#3A1418] border border-[#7A2C33] text-[#E88A93] px-4 py-3 rounded mb-4 text-sm">
+                {extraError}
+              </div>
+            )}
+
+            {requiresPurchase && (
+              <div className="bg-[#1A1710] border border-[#D4A657]/40 text-[#E7E5DF] px-4 py-4 rounded mb-4">
+                <p className="text-sm text-[#9AA1B2] mb-3">You need more credits or a plan upgrade for this.</p>
+                <Link to="/plans" className="inline-block bg-[#D4A657] text-[#0A0E14] hover:bg-[#e0b86e] px-4 py-2 rounded text-sm font-semibold transition">
+                  View Plans
+                </Link>
+              </div>
+            )}
+
+            {!pendingExtra ? (
+              <div className="flex flex-col sm:flex-row gap-3">
+                {!analysis.cv_rewrite_requested && (
+                  <button
+                    onClick={() => setPendingExtra('rewrite')}
+                    className="flex-1 border border-[#2A303C] hover:border-[#D4A657] hover:text-[#D4A657] py-3 rounded-xl font-semibold transition"
+                  >
+                    Generate Rewritten CV
+                  </button>
+                )}
+                {!analysis.cover_letter_requested && (
+                  <button
+                    onClick={() => setPendingExtra('cover_letter')}
+                    className="flex-1 border border-[#2A303C] hover:border-[#D4A657] hover:text-[#D4A657] py-3 rounded-xl font-semibold transition"
+                  >
+                    Generate Cover Letter
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div>
+                <label className="block text-[#E7E5DF] font-semibold mb-2">Seniority Level</label>
+                <select
+                  value={extraLevel}
+                  onChange={(e) => setExtraLevel(e.target.value)}
+                  className="w-full bg-[#0A0E14] border border-[#2A303C] rounded-lg px-4 py-2.5 text-[#E7E5DF] focus:outline-none focus:border-[#D4A657] mb-3"
+                >
+                  {LEVELS.map((l) => (
+                    <option key={l.key} value={l.key} disabled={profile && !unlockedLevels.includes(l.key)}>
+                      {l.label}{profile && !unlockedLevels.includes(l.key) ? ' (upgrade to unlock)' : ''}
+                    </option>
+                  ))}
+                </select>
+                {profile && !unlockedLevels.includes(extraLevel) && (
+                  <p className="text-xs text-[#D4A657] mb-3">
+                    Your current plan doesn't include this level. <Link to="/plans" className="underline">Upgrade here</Link>.
+                  </p>
+                )}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => requestExtra(pendingExtra)}
+                    disabled={extraLoading}
+                    className="bg-[#D4A657] text-[#0A0E14] hover:bg-[#e0b86e] px-6 py-3 rounded-lg font-semibold transition disabled:opacity-50"
+                  >
+                    {extraLoading
+                      ? 'Generating...'
+                      : pendingExtra === 'rewrite' ? 'Generate Rewritten CV' : 'Generate Cover Letter'}
+                  </button>
+                  <button
+                    onClick={() => { setPendingExtra(null); setExtraError(''); setRequiresPurchase(false); }}
+                    disabled={extraLoading}
+                    className="border border-[#2A303C] px-6 py-3 rounded-lg font-semibold transition"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

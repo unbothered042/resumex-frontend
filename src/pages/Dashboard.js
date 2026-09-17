@@ -5,13 +5,6 @@ import Navbar from '../components/Navbar';
 
 const displayFont = { fontFamily: "'Fraunces', ui-serif, Georgia, serif" };
 
-const LEVELS = [
-  { key: 'entry', label: 'Entry Level' },
-  { key: 'mid', label: 'Mid Level' },
-  { key: 'senior', label: 'Senior Level' },
-  { key: 'executive', label: 'Executive' },
-];
-
 function CheckIcon() {
   return (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -42,9 +35,6 @@ function Dashboard() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [cvFile, setCvFile] = useState(null);
   const [jobDescription, setJobDescription] = useState('');
-  const [cvRewriteRequested, setCvRewriteRequested] = useState(false);
-  const [coverLetterRequested, setCoverLetterRequested] = useState(false);
-  const [level, setLevel] = useState('entry');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [requiresAuth, setRequiresAuth] = useState(false);
@@ -54,8 +44,6 @@ function Dashboard() {
   const [profile, setProfile] = useState(null);
 
   const token = localStorage.getItem('access_token');
-  const needsLevel = cvRewriteRequested || coverLetterRequested;
-  const unlockedLevels = profile?.unlocked_levels || [];
 
   useEffect(() => {
     if (token) fetchProfile();
@@ -109,9 +97,6 @@ function Dashboard() {
       const formData = new FormData();
       formData.append('cv_file', cvFile);
       formData.append('job_description', jobDescription);
-      formData.append('cv_rewrite_requested', cvRewriteRequested.toString());
-      formData.append('cover_letter_requested', coverLetterRequested.toString());
-      if (needsLevel) formData.append('level', level);
 
       const res = await API.post('/analyze/', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
@@ -125,7 +110,7 @@ function Dashboard() {
         setRequiresPurchase(true);
         setError(err.response.data.error);
       } else {
-        setError('Analysis failed. Please check your CV and try again.');
+        setError(err.response?.data?.error || 'Analysis failed. Please check your CV and try again.');
       }
     } finally {
       setLoading(false);
@@ -153,8 +138,8 @@ function Dashboard() {
         </div>
         <p className="text-[#9AA1B2] mb-10">
           {token
-            ? 'Upload a CV and job description to get your match score, skill gaps, and improvement tips.'
-            : 'Start with a free CV analysis, no account required. Sign up to unlock tailored rewrites and cover letters.'}
+            ? "Upload a CV and job description to get your match score, skill gaps, and improvement tips. You'll be able to request a tailored rewrite or cover letter after seeing your results."
+            : 'Start with a free CV analysis, no account required. Sign up to unlock tailored rewrites and cover letters afterward.'}
         </p>
 
         {verifyingPayment && (
@@ -254,64 +239,6 @@ function Dashboard() {
               className="w-full bg-[#0D121B] border border-[#2A303C] rounded-xl px-4 py-3 text-[#E7E5DF] placeholder-[#5C6272] focus:outline-none focus:border-[#D4A657] resize-none"
             />
           </div>
-
-          <div className={`flex items-center gap-3 rounded-xl px-4 py-4 border transition ${token ? 'bg-[#0D121B] border-[#2A303C]' : 'bg-[#0D121B] border-[#161B24] opacity-60'}`}>
-            <input
-              type="checkbox"
-              id="rewrite"
-              checked={cvRewriteRequested}
-              onChange={(e) => setCvRewriteRequested(e.target.checked)}
-              disabled={!token}
-              className="w-5 h-5 accent-[#D4A657]"
-            />
-            <label htmlFor="rewrite" className="cursor-pointer flex-1">
-              <p className="font-semibold text-[#E7E5DF]">
-                Generate Rewritten CV
-                {!token && <span className="text-[#D4A657] text-xs ml-2">Requires account</span>}
-              </p>
-              <p className="text-[#9AA1B2] text-sm">Get a new CV to better match this job, downloadable as PDF (uses 1 credit)</p>
-            </label>
-          </div>
-
-          <div className={`flex items-center gap-3 rounded-xl px-4 py-4 border transition ${token ? 'bg-[#0D121B] border-[#2A303C]' : 'bg-[#0D121B] border-[#161B24] opacity-60'}`}>
-            <input
-              type="checkbox"
-              id="cover-letter"
-              checked={coverLetterRequested}
-              onChange={(e) => setCoverLetterRequested(e.target.checked)}
-              disabled={!token}
-              className="w-5 h-5 accent-[#D4A657]"
-            />
-            <label htmlFor="cover-letter" className="cursor-pointer flex-1">
-              <p className="font-semibold text-[#E7E5DF]">
-                Generate Cover Letter
-                {!token && <span className="text-[#D4A657] text-xs ml-2">Requires account</span>}
-              </p>
-              <p className="text-[#9AA1B2] text-sm">Get a new tailored cover letter for this role, downloadable as PDF (uses 1 credit)</p>
-            </label>
-          </div>
-
-          {needsLevel && token && (
-            <div className="bg-[#0D121B] border border-[#2A303C] rounded-xl px-4 py-4">
-              <label className="block text-[#E7E5DF] font-semibold mb-2">Seniority Level</label>
-              <select
-                value={level}
-                onChange={(e) => setLevel(e.target.value)}
-                className="w-full bg-[#0A0E14] border border-[#2A303C] rounded-lg px-4 py-2.5 text-[#E7E5DF] focus:outline-none focus:border-[#D4A657]"
-              >
-                {LEVELS.map((l) => (
-                  <option key={l.key} value={l.key} disabled={profile && !unlockedLevels.includes(l.key)}>
-                    {l.label}{profile && !unlockedLevels.includes(l.key) ? ' (upgrade to unlock)' : ''}
-                  </option>
-                ))}
-              </select>
-              {profile && !unlockedLevels.includes(level) && (
-                <p className="text-xs text-[#D4A657] mt-2">
-                  Your current plan doesn't include this level. <Link to="/plans" className="underline">Upgrade here</Link>.
-                </p>
-              )}
-            </div>
-          )}
 
           <button
             type="submit"
